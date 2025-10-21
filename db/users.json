@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Admin",
+    "phone": "07700000000",
+    "password": "123456",
+    "balance": 0
+  },
+  {
+    "id": 2,
+    "name": "Ali Hassan",
+    "phone": "07710000000",
+    "password": "1111",
+    "balance": 25000
+  },
+  {
+    "id": 3,
+    "name": "Sara Ahmed",
+    "phone": "07820000000",
+    "password": "2222",
+    "balance": 60000
+  }
+]
