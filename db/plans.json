@@ -1,0 +1,42 @@
+[
+  {
+    "id": 101,
+    "title": "Zain Top‑Up 10K",
+    "description": "Prepaid mobile top‑up code (10,000 IQD).",
+    "image": "https://picsum.photos/seed/zain10k/256/256",
+    "price": 10000,
+    "provider": "Zain Iraq"
+  },
+  {
+    "id": 102,
+    "title": "Asiacell Top‑Up 5K",
+    "description": "Prepaid mobile top‑up code (5,000 IQD).",
+    "image": "https://picsum.photos/seed/asia5k/256/256",
+    "price": 5000,
+    "provider": "Asiacell"
+  },
+  {
+    "id": 103,
+    "title": "Steam Wallet $10",
+    "description": "Steam Wallet code (≈$10, priced in IQD).",
+    "image": "https://picsum.photos/seed/steam10/256/256",
+    "price": 16000,
+    "provider": "Steam"
+  },
+  {
+    "id": 104,
+    "title": "PUBG UC 60",
+    "description": "PUBG UC recharge code (60 UC).",
+    "image": "https://picsum.photos/seed/pubg60/256/256",
+    "price": 7500,
+    "provider": "PUBG"
+  },
+  {
+    "id": 105,
+    "title": "Google Play $25",
+    "description": "Google Play gift code (≈$25, priced in IQD).",
+    "image": "https://picsum.photos/seed/gp25/256/256",
+    "price": 40000,
+    "provider": "Google"
+  }
+]

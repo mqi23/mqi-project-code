@@ -58,3 +58,8 @@ process.on("SIGINT", async () => {
 //    ➤ Purpose: Insert multiple card codes for one plan.
 //    ➤ Body: { planId, codes: ["...", "..."] }
 //    ➤ Response: { inserted: N }
+
+app.listen(3000, () => {
+  console.log(`cards-api listening on http://localhost:${PORT}`);
+});
+
