@@ -83,7 +83,7 @@ const getAvailableStock = async () => {
         rows = result.rows;
     } catch (error) {
         
-        console.error("خطأ حاد في الاستعلام (getAvailableStock):", error);
+        console.error("خطأ", error);
         throw error;
     }
 
@@ -94,10 +94,131 @@ const getAvailableStock = async () => {
         available: parseInt(row.available, 10)
     }));
 };
+
+const getSoldStockCount = async () => {
+    const queryText = `
+        SELECT
+            p.id AS plan_id,
+            p.name AS plan_name,
+            COUNT(s.id) AS sold_count
+        FROM
+            plan p
+        LEFT JOIN
+            stock s ON p.id = s.plan_id AND s.state = 'sold'
+        GROUP BY
+            p.id, p.name
+        ORDER BY
+            p.id;
+    `;
+    
+    let rows;
+    try {
+        const result = await db.query(queryText);
+        rows = result.rows;
+    } catch (error) {
+        
+        console.error("(getSoldStockCount):", error);
+        throw error;
+    }
+
+
+    return rows.map(row => ({
+        planId: row.plan_id,    
+        planName: row.plan_name, 
+        soldCount: parseInt(row.sold_count, 10)
+    }));
+};
+
+const getallavailableplans = async () => {
+    const { rows } = await db.query("SELECT * FROM plan");
+    return rows;
+};
+
+const getplanstocksummary = async (planId) => { 
+    const queryText = `
+        SELECT
+            p.id AS plan_id,
+            p.name AS plan_name,
+            SUM(CASE WHEN s.state = 'ready' THEN 1 ELSE 0 END) AS ready_count,
+            SUM(CASE WHEN s.state = 'sold' THEN 1 ELSE 0 END) AS sold_count,
+            SUM(CASE WHEN s.state = 'error' THEN 1 ELSE 0 END) AS error_count
+        FROM
+            plan p
+        LEFT JOIN
+            stock s ON p.id = s.plan_id
+        WHERE
+            p.id = $1
+        GROUP BY
+            p.id, p.name;
+    `;
+    
+    let row;
+    try {
+        const result = await db.query(queryText, [planId]);
+        row = result.rows[0];
+    } catch (error) {
+        
+        console.error("خطأ", error);
+        throw error;
+    }
+
+    if (!row) {
+        return null; 
+    }
+
+    return {
+        planId: row.plan_id,
+        planName: row.plan_name,
+        ready: parseInt(row.ready_count, 10),
+        sold: parseInt(row.sold_count, 10),
+        error: parseInt(row.error_count, 10)
+    };
+};
+
+const insertStockBatch = async (planId, codes) => {
+    const planCheck = await db.query(
+        `SELECT id FROM plan WHERE id = ${planId}`
+    );
+    
+    if (planCheck.rowCount === 0) {
+        return { success: false, message: "Plan not found" };
+    }
+    const safeCodes = codes
+        .filter(code => typeof code === 'string' && code.trim() !== '')
+        .map(code => `'${code.trim()}'`); 
+
+    if (safeCodes.length === 0) {
+        return { success: false, message: "No valid codes provided for insertion." };
+    }
+    const valuesString = safeCodes.map(code => 
+        `(${planId}, ${code}, 'ready')`
+    ).join(', ');
+
+
+    const queryText = `
+        INSERT INTO stock (plan_id, code, state)
+        VALUES ${valuesString}
+        ON CONFLICT (code) DO NOTHING
+        RETURNING id; 
+    `;
+
+    try {
+        const result = await db.query(queryText);
+        return { success: true, inserted: result.rowCount };
+    } catch (error) {
+        console.error("خطأ", error);
+        throw error;
+    }
+};
+
 module.exports = {
   getPlans,
   getPlanById,
   purchase,
   getAvailableStock,
+  getSoldStockCount,
+  getallavailableplans,
+  getplanstocksummary,
+  insertStockBatch,
 };
 

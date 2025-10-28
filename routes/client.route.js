@@ -1,7 +1,7 @@
 // routes/client.route.js
 const express = require("express");
 const router = express.Router();
-const { register, login , getBalance } = require("../controllers/clientController");
+const { register, login , getBalance ,topupClientBalance } = require("../controllers/clientController");
 
 router.post("/register", async (req, res) => {
   try {
@@ -42,5 +42,24 @@ router.get("/:id/balance", async (req, res) => {
     res.status(500).send({ message: "اكو مشكله بالدنيا..." });
   }
 }); 
+
+router.post("/:id/topup", async (req, res) => {
+  try {
+    const clientId = parseInt(req.params.id);
+    const amount = parseFloat(req.body.amount);
+    const result = await topupClientBalance(clientId, amount);
+    if (!result.success) {
+      return res.status(404).send({ message: result.message });
+    }
+    res.send({
+      id: clientId,
+      oldBalance: result.oldBalance,
+      newBalance: result.newBalance,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "اكو مشكله بالدنيا..." });
+  }
+});
 
 module.exports = router;

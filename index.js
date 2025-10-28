@@ -1,3 +1,4 @@
+//index.js
 const express = require("express");
 const app = express();
 const PORT = 3000;
@@ -11,6 +12,7 @@ app.get("/", async (req, res) => {
 
 app.use("/plans", plansRoutes);
 app.use("/client", clientsRoutes);
+app.use("/invoice", require("./routes/invoice.route"));
 
 app.listen(PORT, () => {
   console.log("http://localhost:3000");
